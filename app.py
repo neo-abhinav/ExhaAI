@@ -3,6 +3,7 @@ from flask_socketio import SocketIO, emit
 from datetime import datetime
 import requests
 import secrets
+import re
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = secrets.token_hex(16)
@@ -29,11 +30,12 @@ HTML_TEMPLATE = """
             --button-text-color: #fff;
             --border-color: #333333;
             --hover-bg: #3700b3;
+            --font-family: 'Inter', sans-serif;
         }
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Inter', sans-serif;
+            font-family: var(--font-family);
             background-color: var(--primary-bg);
             color: var(--text-color);
             display: flex;
@@ -55,19 +57,19 @@ HTML_TEMPLATE = """
         .header {
             display: flex;
             align-items: center;
-            padding: 10px 20px;
+            padding: 20px 20px;
             background-color: var(--secondary-bg);
             border-bottom: 1px solid var(--border-color);
             justify-content: center;
         }
         .logo {
-            width: 50px;
-            height: 50px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             margin-right: 10px;
         }
         .brand-title {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
         }
         .chat-container {
@@ -94,6 +96,15 @@ HTML_TEMPLATE = """
             background-color: var(--assistant-msg-bg);
             color: var(--text-color);
             align-self: flex-start;
+        }
+        .assistant-message b {
+            font-weight: bold;
+        }
+        .assistant-message i {
+            font-style: italic;
+        }
+        .assistant-message em {
+            font-style: italic;
         }
         .input-container {
             display: flex;
@@ -151,7 +162,7 @@ HTML_TEMPLATE = """
         function addMessage(message, isUser) {
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', isUser ? 'user-message' : 'assistant-message');
-            messageDiv.textContent = message;
+            messageDiv.innerHTML = message; // Allow formatted HTML for AI responses
             chatContainer.appendChild(messageDiv);
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
@@ -178,7 +189,7 @@ HTML_TEMPLATE = """
         });
 
         socket.on('error', function(data) {
-            addMessage('Error: ' + data.message, false);
+            addMessage('<b>Error:</b> ' + data.message, false);
         });
     </script>
 </body>
@@ -218,8 +229,9 @@ def handle_message(data):
         if response.status_code == 200:
             data = response.json()
             if 'response' in data:
+                formatted_response = format_ai_response(data['response'])
                 emit('message', {
-                    'message': data['response'],
+                    'message': formatted_response,
                     'is_user': False,
                     'timestamp': datetime.now().strftime("%H:%M")
                 })
@@ -228,6 +240,14 @@ def handle_message(data):
     except Exception as e:
         emit('error', {'message': str(e)})
 
+def format_ai_response(response):
+    """
+    Converts plain text responses into HTML with styles (e.g., bold, italic).
+    """
+    response = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', response)  # Bold
+    response = re.sub(r'\*(.*?)\*', r'<i>\1</i>', response)      # Italic
+    response = re.sub(r'__(.*?)__', r'<em>\1</em>', response)    # Emphasis
+    return response
+
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=8080, debug=True)
-    print("Hello")
