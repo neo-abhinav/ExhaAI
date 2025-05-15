@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="chat-window">
+    <div class="header">
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='img/exhaai.ico') }}" alt="ExhaAi Logo" class="logo">
+            <h1>ExhaAi</h1>
+        </div>
+        <button class="new-chat" id="newChatButton">+</button>
+    </div>
+
+    <div class="chat-messages" id="chatMessages">
+        <!-- Messages will be inserted here dynamically -->
+    </div>
+
+    <div class="input-container">
+        <input type="text" id="messageInput" placeholder="Send a message...">
+        <button id="sendButton">
+            <img src="{{ url_for('static', filename='img/send.ico') }}" alt="Send">
+        </button>
+    </div>
+</div>
+{% endblock %}
