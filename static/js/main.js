@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const socket = io();
+    // Modify the socket connection to use the correct host and port
+    const socket = io(window.location.protocol + '//' + window.location.hostname + ':8080');
     const chatMessages = document.getElementById('chatMessages');
     const messageInput = document.getElementById('messageInput');
     const sendButton = document.getElementById('sendButton');
