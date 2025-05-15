@@ -6,7 +6,7 @@ import secrets
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = secrets.token_hex(16)
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*")  # Allow connections from any origin
 
 API_BASE_URL = 'https://neo-abhinav.onrender.com/api'
 
@@ -98,4 +98,5 @@ def handle_new_chat():
         emit('error', {'message': str(e)})
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    # Modified to run on 0.0.0.0:8080
+    socketio.run(app, host='0.0.0.0', port=8080, debug=True)
