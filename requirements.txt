@@ -1,8 +1,0 @@
-flask
-werkzeug
-flask-socketio
-requests
-python-engineio
-python-socketio
-eventlet
-gunicorn
