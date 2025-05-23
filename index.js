@@ -3,6 +3,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const fetch = require('node-fetch');
 const path = require('path');
+
 const marked = require('marked');
 
 const app = express();
@@ -107,6 +108,6 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 8080;
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`Server listening on http://localhost:${PORT}`);
 });
