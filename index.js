@@ -27,8 +27,8 @@ io.on('connection', (socket) => {
   socket.on('send_message', async (data) => {
     const payload = {
       id: chats[socket.id],
-      msg: data.message,
-      model: "reka-core",
+      msg: "Answer the question and remember that You are a helpful assistant made by Abhinav Kumar of Class VIII. Your name is OGS AI. You are an AI made for helping students of Oak Grove School Jharipani Mussoorie.\n" + data.message,
+      model: "blackboxai",
       system_prompt: null,
     };
     try {

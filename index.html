@@ -1,19 +1,36 @@
 <!DOCTYPE html>
 <html lang="en" class="h-full">
+
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>OGS AI - Full Screen Chat</title>
+<!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com"></script>
+<!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
+<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<!-- MathJax for LaTeX -->
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+<!-- Marked for Markdown -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <style>
-  /* Custom scrollbars for dark theme */
-  ::-webkit-scrollbar { width: 8px; }
-  ::-webkit-scrollbar-track { background: #1f2937; }
-  ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 10px }
-  ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
-  
+  /* Custom scrollbar styles */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #1f2937;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #4b5563;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
+  }
+
   /* Typing animation dots */
   @keyframes typing {
     0% { opacity: 0.5; }
@@ -21,33 +38,49 @@
     100% { opacity: 0.5; }
   }
   .typing-dot {
-    width: 8px; height: 8px; border-radius: 50%; background: #9ca3af;
-    margin: 0 2px; animation: typing 1.5s infinite ease-in-out;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #9ca3af;
+    margin: 0 2px;
+    animation: typing 1.5s infinite ease-in-out;
   }
   .typing-dot:nth-child(1) { animation-delay: 0s; }
   .typing-dot:nth-child(2) { animation-delay: 0.3s; }
   .typing-dot:nth-child(3) { animation-delay: 0.6s; }
 
-  /* Gradient backgrounds for headers and UI */
-  .gradient-bg {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  /* Style for message bubbles - response messages */
+  .message-bubble {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 8px 0;
+  max-width: 80%;
+  background-color: #2d3748; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: 2px solid #4b5563;
+  word-wrap: break-word;
   }
 
-  /* Dark mode scrollbar customization for main body */
-  body.dark {
-    --scrollbar-track-color: #1f2937;
-    --scrollbar-thumb-color: #4b5563;
+  /* Style for user prompt */
+  .user-prompt {
+    background: #7c3aed;
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 15px;
+    max-width: 80%;
+    margin: 8px 0;
   }
 </style>
 </head>
-<body class="flex flex-col h-full dark font-sans bg-gray-900 text-gray-100">
 
+<body class="flex flex-col h-full dark font-sans bg-gray-900 text-gray-100">
 <div class="flex flex-col h-full">
   <!-- Header -->
   <header class="flex items-center justify-between p-4 bg-gray-800 border-b border-gray-700 sticky top-0 z-10">
     <div class="flex items-center space-x-3">
-      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center">
-        <img src="logo.png" alt="OGS AI Logo" class="w-6 h-6" />
+      <!-- Updated logo container to make logo filled circle -->
+      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center overflow-hidden">
+        <img src="logo.png" alt="OGS AI Logo" class="w-full h-full object-cover rounded-full" />
       </div>
       <h1 class="font-bold text-lg">OGS AI</h1>
     </div>
@@ -57,10 +90,10 @@
       <button id="settingsBtn" title="Settings"><i class="fas fa-cog"></i></button>
     </div>
   </header>
-  
-  <!-- Chat Area -->
+  <!-- Chat container -->
   <div id="chat" class="flex-1 overflow-y-auto p-4 space-y-4 relative bg-gray-900">
-    <div id="welcomeMsg" class="flex flex-col items-center justify-center h-full text-center text-gray-500 py-12">
+    <div id="welcomeMsg"
+      class="flex flex-col items-center justify-center h-full text-center text-gray-500 py-12">
       <div class="w-16 h-16 rounded-full bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center mb-4">
         <img src="logo.png" alt="OGS AI Logo" class="w-10 h-10" />
       </div>
@@ -68,96 +101,103 @@
       <p class="max-w-md">Ask me anything, or start with a prompt. Use "image:" to generate images.</p>
     </div>
   </div>
-  
-  <!-- Input Area -->
+  <!-- Input area -->
   <div class="p-4 bg-gray-800 border-t border-gray-700 relative">
     <div class="relative flex items-center">
       <textarea id="msg" placeholder="Ask anything..." class="w-full px-4 py-3 bg-gray-700 text-white rounded-lg resize-none focus:outline-none" rows="1"></textarea>
-      <button id="sendBtn" class="absolute right-3 bottom-3 bg-purple-600 hover:bg-purple-500 text-white p-2 rounded-full transition disabled:opacity-50 disabled:cursor-not-allowed" title="Send" disabled><i class="fas fa-paper-plane"></i></button>
+      <button id="sendBtn" class="absolute right-3 bottom-3 bg-purple-600 hover:bg-purple-500 text-white p-2 rounded-full transition disabled:opacity-50 disabled:cursor-not-allowed" title="Send" disabled>
+        <i class="fas fa-paper-plane"></i>
+      </button>
     </div>
   </div>
 </div>
 
-<!-- Socket.io and script -->
+<!-- Scripts -->
 <script src="/socket.io/socket.io.js"></script>
 <script>
   const socket = io();
-  const chat = document.getElementById("chat");
-  const msgInput = document.getElementById("msg");
-  const sendBtn = document.getElementById("sendBtn");
-  const welcomeMsg = document.getElementById("welcomeMsg");
-  const newChatBtn = document.getElementById("newChatBtn");
-  const clearChatBtn = document.getElementById("clearChatBtn");
-  const settingsBtn = document.getElementById("settingsBtn");
-
-  let typingIndicator = null;
+  const chat = document.getElementById('chat');
+  const msgInput = document.getElementById('msg');
+  const sendBtn = document.getElementById('sendBtn');
   let isSending = false;
 
-  // Enable send button based on input
   msgInput.addEventListener('input', () => {
     sendBtn.disabled = !msgInput.value.trim() || isSending;
   });
 
-  // Function to add messages to chat
-  function addMessage(content, isUser , timestamp = null) {
-    if (welcomeMsg) welcomeMsg.style.display = 'none';
+  function addMessage(content, isUser, timestamp = null) {
+    if (document.getElementById('welcomeMsg')) {
+      document.getElementById('welcomeMsg').style.display = 'none';
+    }
+    const timeHtml = timestamp ? `<div class="text-xs text-gray-400 mt-2">${timestamp}</div>` : '';
+    const alignClass = isUser ? 'justify-end' : 'justify-start';
+    const bubbleClass = isUser ? 'user-prompt' : 'message-bubble';
 
-    const timeStr = timestamp ? '<div class="text-xs text-gray-400 mt-2">' + timestamp + '</div>' : '';
-    const bubbleClass = isUser  ? 'bg-purple-600 text-white' : 'bg-gray-700';
-    const alignClass = isUser  ? 'justify-end' : 'justify-start';
+    if (!isUser) {
+      // Use Markdown & MathJax
+      const container = document.createElement('div');
+      container.className = `flex ${alignClass}`;
+      const bubble = document.createElement('div');
+      bubble.className = `${bubbleClass} response-content`;
 
-    const html = `
-      <div class='flex ${alignClass}'>
-        <div class='max-w-[90%] rounded-lg p-4 shadow-lg ${bubbleClass}'>
-          <div>${content}</div>
-          ${timeStr}
-        </div>
-      </div>`;
-    chat.insertAdjacentHTML("beforeend", html);
+      // Markdown + MathJax support
+      content = marked.parse(content);
+      bubble.innerHTML = content + timeHtml;
+      container.appendChild(bubble);
+      chat.appendChild(container);
+
+      MathJax.typesetPromise([bubble]).then(() => chat.scrollTop = chat.scrollHeight);
+    } else {
+      content = content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const html = `<div class="flex ${alignClass}">
+                      <div class="${bubbleClass} response-content">${content}${timeHtml}</div>
+                    </div>`;
+      chat.insertAdjacentHTML('beforeend', html);
+    }
+
     chat.scrollTop = chat.scrollHeight;
   }
 
   function showTyping() {
     hideTyping();
-    typingIndicator = document.createElement('div');
-    typingIndicator.className = 'flex justify-start space-x-2 p-2 max-w-[90%] bg-gray-700 rounded-lg';
-    typingIndicator.innerHTML = `
+    const indicator = document.createElement('div');
+    indicator.className = 'flex justify-start space-x-2 p-2 max-w-[90%] bg-gray-700 rounded-lg';
+    indicator.innerHTML = `
       <div class="flex items-center space-x-2">
         <div class="typing-dot"></div>
         <div class="typing-dot"></div>
         <div class="typing-dot"></div>
       </div>
       <div class="text-gray-300 text-sm">Thinking...</div>`;
-    chat.appendChild(typingIndicator);
+    chat.appendChild(indicator);
+    window._typingIndicator = indicator;
     chat.scrollTop = chat.scrollHeight;
   }
 
-  function hideTyping() {
-    if (typingIndicator && chat.contains(typingIndicator)) {
-      chat.removeChild(typingIndicator);
-      typingIndicator = null;
+  function hideTyping()    if (window._typingIndicator && chat.contains(window._typingIndicator)) {
+      chat.removeChild(window._typingIndicator);
     }
   }
 
-  sendBtn.onclick = () => {
+  document.getElementById('sendBtn').onclick = () => {
     const text = msgInput.value.trim();
     if (!text || isSending) return;
     isSending = true;
     addMessage(text, true);
-    msgInput.value = "";
+    msgInput.value = '';
     sendBtn.disabled = true;
     showTyping();
-    socket.emit("send_message", { message: text });
+    socket.emit('send_message', { message: text });
   };
 
   msgInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      sendBtn.click();
+      document.getElementById('sendBtn').click();
     }
   });
 
-  socket.on("message", (data) => {
+  socket.on('message', (data) => {
     hideTyping();
     const now = new Date().toLocaleTimeString();
     addMessage(data.message, false, now);
@@ -166,7 +206,7 @@
     msgInput.focus();
   });
 
-  newChatBtn.onclick = clearChatBtn.onclick = () => {
+  function resetChat() {
     chat.innerHTML = `
       <div id="welcomeMsg" class="flex flex-col items-center justify-center h-full text-center text-gray-500 py-12">
         <div class="w-16 h-16 rounded-full bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center mb-4">
@@ -176,11 +216,16 @@
         <p class="max-w-md">Ask me anything, or start with a prompt. Use "image:" to generate images.</p>
       </div>`;
     msgInput.focus();
+  }
+
+  document.getElementById('newChatBtn').onclick = resetChat;
+  document.getElementById('clearChatBtn').onclick = resetChat;
+  document.getElementById('settingsBtn').onclick = () => alert('Coming soon!');
+
+  window.onload = () => {
+    msgInput.focus();
   };
-
-  settingsBtn.onclick = () => alert("Settings feature coming soon!");
-
-  window.onload = () => msgInput.focus();
 </script>
 </body>
+
 </html>
